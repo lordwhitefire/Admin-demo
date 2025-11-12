@@ -2,7 +2,7 @@
 import { useAuth } from '../context/AuthContext';
 import { useProducts } from '../context/ProductsContext';
 import { useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
+
 
 const Dashboard = () => {
   const { user, logout } = useAuth();

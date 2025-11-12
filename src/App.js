@@ -12,10 +12,7 @@ import { NewArrivalsProvider } from './context/NewArrivalsContext';
 
 import './index.css';
 
-function ProtectedRoute({ children }) {
-  const { user } = useAuth();
-  return user ? children : <Navigate to="/login" />;
-}
+
 
 function App() {
   return (
