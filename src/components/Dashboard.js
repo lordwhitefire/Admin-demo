@@ -45,7 +45,14 @@ const Dashboard = () => {
       desc: 'Founder story, paragraphs, image',
       path: '/admin/settings/about',
       color: 'from-emerald-500 to-teal-600'
-    }
+    },
+  {
+    title: 'WhatsApp Buttons',
+    count: '6',
+    desc: 'Manage all site CTA buttons',
+    path: '/admin/whatsapp-buttons',
+    color: 'from-green-500 to-emerald-600'
+  }
   ];
 
   return (

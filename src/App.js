@@ -9,6 +9,7 @@ import NewArrivalProducts from './components/NewArrivalProducts';
 import HomeSettings from './components/HomeSettings';
 import AboutSettings from './components/AboutSettings';
 import { NewArrivalsProvider } from './context/NewArrivalsContext';
+import WhatsappButtonsPanel from './components/WhatsappButtonsPanel';
 
 import './index.css';
 
@@ -28,6 +29,7 @@ function App() {
                 <Route path="/admin/new-arrivals" element={<NewArrivalProducts />} />
                 <Route path="/admin/settings/home" element={<HomeSettings />} />
                 <Route path="/admin/settings/about" element={<AboutSettings />} />
+                <Route path="/admin/whatsapp-buttons" element={<WhatsappButtonsPanel />} />
               <Route path="/" element={<Navigate to="/dashboard" />} />
             </Routes>
           </div>
