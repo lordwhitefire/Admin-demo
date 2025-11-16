@@ -36,11 +36,23 @@ export const NewArrivalsProvider = ({ children }) => {
   };
 
 const addNewArrival = async (shopProduct) => {
-  if (newArrivals.length >= 6) {
-    return { success: false, error: 'Max 6 new arrivals allowed' };
+  // PAYMENT LOCK
+  if (!process.env.SANITY_TOKEN) {
+    return { 
+      success: false, 
+      error: 'Payment required: Admin write access disabled until full payment.' 
+    };
   }
 
-  console.log('DEBUG: shopProduct.isNew =', shopProduct.isNew); // ← DEBUG HERE
+  // MAX 6 CHECK
+  if (newArrivals.length >= 6) {
+    return { 
+      success: false, 
+      error: 'Max 6 new arrivals allowed.' 
+    };
+  }
+
+  console.log('DEBUG: shopProduct.isNew =', shopProduct.isNew);
 
   try {
     await client.create({
@@ -49,7 +61,7 @@ const addNewArrival = async (shopProduct) => {
       name: shopProduct.name,
       shortDescription: shopProduct.shortDescription || '',
       category: shopProduct.category,
-      isNew: shopProduct.isNew || false, // ← INHERIT FROM MAIN PRODUCT
+      isNew: shopProduct.isNew || false,
       mainImage: {
         _type: 'image',
         asset: {
@@ -60,7 +72,6 @@ const addNewArrival = async (shopProduct) => {
     });
 
     console.log('DEBUG: New Arrival created with isNew =', shopProduct.isNew);
-
     await fetchNewArrivals();
     return { success: true };
   } catch (err) {
@@ -69,15 +80,24 @@ const addNewArrival = async (shopProduct) => {
   }
 };
 
-  const removeNewArrival = async (id) => {
-    try {
-      await client.delete(id);
-      setNewArrivals(prev => prev.filter(p => p._id !== id));
-      return { success: true };
-    } catch (err) {
-      return { success: false, error: err.message };
-    }
-  };
+const removeNewArrival = async (id) => {
+  // PAYMENT LOCK
+  if (!process.env.SANITY_TOKEN) {
+    return { 
+      success: false, 
+      error: 'Payment required: Admin write access disabled until full payment.' 
+    };
+  }
+
+  try {
+    await client.delete(id);
+    // Update local state immediately
+    setNewArrivals(prev => prev.filter(p => p._id !== id));
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+};
 
   useEffect(() => {
     fetchNewArrivals();

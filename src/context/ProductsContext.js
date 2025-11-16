@@ -15,7 +15,15 @@ export const ProductsProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch all shop products
+  // PAYMENT LOCK
+  const requirePayment = () => {
+    if (!process.env.SANITY_TOKEN) {
+      return { success: false, error: 'Payment required: Admin write access disabled until full payment.' };
+    }
+    return null;
+  };
+
+  // Fetch all shop products // Fetch all shop products
   const fetchProducts = async () => {
     setLoading(true);
     setError(null);
@@ -41,28 +49,24 @@ export const ProductsProvider = ({ children }) => {
     }
   };
 
-  // Toggle isNew — MAX 6 ONLY
+  // Toggle isNew — MAX 6 + PAYMENT
   const toggleNewArrival = async (productId) => {
+    const lock = requirePayment();
+    if (lock) return lock;
+
     const product = products.find(p => p._id === productId);
     if (!product) return { success: false, error: 'Product not found' };
 
     const currentNewCount = products.filter(p => p.isNew).length;
     const willBeNew = !product.isNew;
-
     if (willBeNew && currentNewCount >= 6) {
       return { success: false, error: 'Max 6 new arrivals allowed' };
     }
 
     try {
-      await client
-        .patch(productId)
-        .set({ isNew: willBeNew })
-        .commit();
-
+      await client.patch(productId).set({ isNew: willBeNew }).commit();
       setProducts(prev =>
-        prev.map(p =>
-          p._id === productId ? { ...p, isNew: willBeNew } : p
-        )
+        prev.map(p => p._id === productId ? { ...p, isNew: willBeNew } : p)
       );
       return { success: true };
     } catch (err) {
@@ -72,6 +76,9 @@ export const ProductsProvider = ({ children }) => {
 
   // Add new product
   const addProduct = async (productData) => {
+    const lock = requirePayment();
+    if (lock) return lock;
+
     try {
       const doc = {
         _type: 'shopProduct',
@@ -79,7 +86,7 @@ export const ProductsProvider = ({ children }) => {
         isNew: false,
       };
       const result = await client.create(doc);
-      await fetchProducts(); // Refresh
+      await fetchProducts();
       return { success: true, data: result };
     } catch (err) {
       return { success: false, error: err.message };
@@ -88,6 +95,9 @@ export const ProductsProvider = ({ children }) => {
 
   // Update product
   const updateProduct = async (id, updates) => {
+    const lock = requirePayment();
+    if (lock) return lock;
+
     try {
       await client.patch(id).set(updates).commit();
       await fetchProducts();
@@ -99,6 +109,9 @@ export const ProductsProvider = ({ children }) => {
 
   // Delete product
   const deleteProduct = async (id) => {
+    const lock = requirePayment();
+    if (lock) return lock;
+
     try {
       await client.delete(id);
       setProducts(prev => prev.filter(p => p._id !== id));
@@ -108,7 +121,6 @@ export const ProductsProvider = ({ children }) => {
     }
   };
 
-  // Load on mount
   useEffect(() => {
     fetchProducts();
   }, []);
@@ -130,3 +142,6 @@ export const ProductsProvider = ({ children }) => {
     </ProductsContext.Provider>
   );
 };
+
+
+
