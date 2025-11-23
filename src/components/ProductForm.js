@@ -62,7 +62,7 @@ const ProductForm = ({ product, onClose }) => {
 
   const handleSubmit = async (e) => {
     // PAYMENT CHECK — BLOCKS WRITE IF NO TOKEN
-  if (!process.env.SANITY_TOKEN) {
+  if (!process.env.REACT_APP_SANITY_TOKEN) {
     alert('Payment required: Admin write access is disabled until full payment.');
     return;
   }
