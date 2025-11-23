@@ -37,7 +37,7 @@ export const NewArrivalsProvider = ({ children }) => {
 
 const addNewArrival = async (shopProduct) => {
   // PAYMENT LOCK
-  if (!process.env.SANITY_TOKEN) {
+  if (!process.env.REACT_APP_SANITY_TOKEN) {
     return { 
       success: false, 
       error: 'Payment required: Admin write access disabled until full payment.' 
@@ -82,7 +82,7 @@ const addNewArrival = async (shopProduct) => {
 
 const removeNewArrival = async (id) => {
   // PAYMENT LOCK
-  if (!process.env.SANITY_TOKEN) {
+  if (!process.env.REACT_APP_SANITY_TOKEN) {
     return { 
       success: false, 
       error: 'Payment required: Admin write access disabled until full payment.' 
