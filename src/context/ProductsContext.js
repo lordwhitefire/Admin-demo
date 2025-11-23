@@ -17,7 +17,7 @@ export const ProductsProvider = ({ children }) => {
 
   // PAYMENT LOCK
   const requirePayment = () => {
-    if (!process.env.SANITY_TOKEN) {
+    if (!process.env.REACT_APP_SANITY_TOKEN) {
       return { success: false, error: 'Payment required: Admin write access disabled until full payment.' };
     }
     return null;
